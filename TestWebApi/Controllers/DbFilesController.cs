@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace TestWebApi.Controllers
 {
@@ -31,17 +32,17 @@ namespace TestWebApi.Controllers
           
         }
 
-        //[HttpGet("{id}")]
+        [HttpGet("{id}")]
 
-        //public async Task<ActionResult<DbFile>> GetOne(int id)
-        //{
-        //    DbFile newf = await db.Files.FirstOrDefaultAsync(f => f.Id == id);
-        //    if (newf != null)
-        //    {
-        //        return new ObjectResult(newf);
-        //    }
-        //    return NotFound(newf);
-        //}
+        public async Task<ActionResult<DbFile>> GetOne(int id)
+        {
+            DbFile newf = await db.Files.FirstOrDefaultAsync(f => f.Id == id);
+            if (newf != null)
+            {
+                return new ObjectResult(newf);
+            }
+            return NotFound(newf);
+        }
 
         [HttpPost]
         public async Task<ActionResult<IEnumerable<DbFile>>> Post(IFormFileCollection files)
@@ -50,9 +51,12 @@ namespace TestWebApi.Controllers
             {
                 return BadRequest("Нужно загрузить файл");
             }
+            List<DbFile> forresponse = new List<DbFile>();
             foreach (FormFile file in files)
             {
                 DbFile newf = new DbFile();
+                Regex reg = new Regex(@"\.\w*$");
+                string type = reg.Match(file.FileName).Value;
                 string[] nameandtype = file.FileName.Split(".");
                 newf.Name = nameandtype[0];
                 newf.Size = file.Length/1024000f;
@@ -60,13 +64,14 @@ namespace TestWebApi.Controllers
                 {
                     newf.Data = reader.ReadBytes((int)file.Length);
                 }
-                newf.Type = nameandtype[1];
+                newf.Type = type;
                 db.Files.Add(newf);
-                await db.SaveChangesAsync();   
-              
+                await db.SaveChangesAsync();
+                newf = await db.Files.OrderByDescending(f=>f.Id).FirstOrDefaultAsync();
+                forresponse.Add(newf);
+
             }
-            
-            return await db.Files.TakeLast(files.Count).ToListAsync();
+            return forresponse;
 
         }
 
@@ -81,15 +86,8 @@ namespace TestWebApi.Controllers
                 await db.SaveChangesAsync();
                 return Ok(file.Name);
             }
-            return NotFound(file.Name);
+            return NotFound();
         }
-
-        //private readonly ILogger<DbFilesController> _logger;
-
-        //public DbFilesController(ILogger<DbFilesController> logger)
-        //{
-        //    _logger = logger;
-        //}
 
     }
 }

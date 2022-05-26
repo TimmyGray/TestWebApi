@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TestWebApi.Models;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace TestWpfClient
 {
@@ -27,11 +28,11 @@ namespace TestWpfClient
     /// </summary>
     public partial class MainWindow : Window
     {
+          ObservableCollection<DbFile>? files = new ObservableCollection<DbFile>();
         public MainWindow()
         {
             InitializeComponent();
             ForUploadBut.Click += ForUploadBut_Click;
-            
         }
 
         private async void ForUploadBut_Click(object sender, RoutedEventArgs e)
@@ -52,15 +53,18 @@ namespace TestWpfClient
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Content = content;
                 message.Method = HttpMethod.Post;
-                message.RequestUri = new Uri("http://localhost:5232/dbfiles");
+                message.RequestUri = new Uri("http://localhost:5000/dbfiles");
 
                 HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.SendAsync(message);
                 if (response.IsSuccessStatusCode)
                 {
                     
-                    var files = JsonConvert.DeserializeObject<List<DbFile>>(await response.Content.ReadAsStringAsync());
-                    ForFileGrid.Items.Add(files);
+                    var addfiles = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(await response.Content.ReadAsStringAsync());
+                    foreach (var file in addfiles)
+                    {
+                        files.Add(file);
+                    }
                     MessageBox.Show($"Файл(ы) успешно добавлен(ы)");
                     
                 }
@@ -68,27 +72,33 @@ namespace TestWpfClient
 
         }
 
-        private async void ForFileGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.BaseAddress = new Uri("http://localhost:5232/");
-            HttpResponseMessage response = await client.GetAsync("dbfiles");
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var files = JsonConvert.DeserializeObject<List<DbFile>>(
-                     await response.Content.ReadAsStringAsync());
-                ForFileGrid.ItemsSource = files;
-            }
-        }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFile = new SaveFileDialog();
             if (saveFile.ShowDialog()==true)
             {
+                DbFile downfile = (DbFile)ForFileGrid.SelectedItem;
+                saveFile.Title = "Скачать файл";
+               
+                string path = $"{saveFile.FileName}{downfile.Type}"; 
 
+                HttpRequestMessage request = new HttpRequestMessage();
+                request.Method = HttpMethod.Get;
+                request.RequestUri = new Uri($"http://localhost:5000/dbfiles/{downfile.Id}");
+
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                   var file = JsonConvert.DeserializeObject<DbFile>(await response.Content.ReadAsStringAsync());
+                    using (FileStream stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
+                    {
+                        stream.WriteAsync(file.Data, 0, file.Data.Length);
+
+                    }
+                    MessageBox.Show("Файл скачен");
+                }
             }
            
 
@@ -100,15 +110,37 @@ namespace TestWpfClient
             
             HttpRequestMessage request = new HttpRequestMessage();
             request.Method = HttpMethod.Delete;
-            request.RequestUri = new Uri($"http://localhost:5232/dbfiles/{delf.Id}");
+            request.RequestUri = new Uri($"http://localhost:5000/dbfiles/{delf.Id}");
             
             HttpClient client = new HttpClient();
             
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                string json = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"{json} успешно удален");
+                string delfile = await response.Content.ReadAsStringAsync();
+                files.Remove(files.FirstOrDefault(f=>f.Id==delf.Id));
+                MessageBox.Show($"{delfile} успешно удален");
+            }
+
+        }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.BaseAddress = new Uri("http://localhost:5000/");
+            HttpResponseMessage response = await client.GetAsync("dbfiles");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
+                    await response.Content.ReadAsStringAsync());
+                foreach(var file in download)
+                {
+                    files.Add(file);
+
+                }
+                ForFileGrid.ItemsSource = files;
             }
 
         }
