@@ -21,15 +21,7 @@ namespace TestWebApi.Controllers
         {
             
             this.db = db;
-            if (!db.Files.Any())
-            {
-                db.Files.AddRange(
-                    new DbFile { Name = "Test1", Size = 25, Type = "txt" },
-                    new DbFile { Name = "Test2", Size = 50, Type = "mp3" },
-                    new DbFile { Name = "Test3", Size = 75, Type = "jpeg" });
-                db.SaveChanges();
-
-            }
+            
 
         }
         [HttpGet]
@@ -51,32 +43,46 @@ namespace TestWebApi.Controllers
         //    return NotFound(newf);
         //}
 
-        //[HttpPost]
-        //public async Task<ActionResult<DbFile>> Post(DbFile file)
-        //{
-        //    if(file == null)
-        //    {
-        //        return BadRequest("Нужно загрузить файл");
-        //    }
-        //    db.Files.Add(file);
-        //    await db.SaveChangesAsync();
-        //    return Ok(file);
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<DbFile>>> Post(IFormFileCollection files)
+        {
+            if (files == null)
+            {
+                return BadRequest("Нужно загрузить файл");
+            }
+            foreach (FormFile file in files)
+            {
+                DbFile newf = new DbFile();
+                string[] nameandtype = file.FileName.Split(".");
+                newf.Name = nameandtype[0];
+                newf.Size = file.Length/1024000f;
+                using (var reader = new BinaryReader(file.OpenReadStream()))
+                {
+                    newf.Data = reader.ReadBytes((int)file.Length);
+                }
+                newf.Type = nameandtype[1];
+                db.Files.Add(newf);
+                await db.SaveChangesAsync();   
+              
+            }
+            
+            return await db.Files.TakeLast(files.Count).ToListAsync();
 
-        //}
+        }
 
-        //[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
 
-        //public async Task<ActionResult<DbFile>> Delete(int id)
-        //{
-        //    DbFile file = await db.Files.FirstOrDefaultAsync(x => x.Id == id);
-        //    if (file != null)
-        //    {
-        //        db.Files.Remove(file);
-        //        await db.SaveChangesAsync();
-        //        return Ok(file);
-        //    }
-        //    return NotFound(file);
-        //}
+        public async Task<ActionResult<DbFile>> Delete(int id)
+        {
+            DbFile file = await db.Files.FirstOrDefaultAsync(x => x.Id == id);
+            if (file != null)
+            {
+                db.Files.Remove(file);
+                await db.SaveChangesAsync();
+                return Ok(file.Name);
+            }
+            return NotFound(file.Name);
+        }
 
         //private readonly ILogger<DbFilesController> _logger;
 

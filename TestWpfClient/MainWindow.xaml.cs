@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Microsoft.Win32;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -33,10 +34,37 @@ namespace TestWpfClient
             
         }
 
-        private void ForUploadBut_Click(object sender, RoutedEventArgs e)
+        private async void ForUploadBut_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.ShowDialog();
+            openFileDialog.Multiselect = true;
+            if (openFileDialog.ShowDialog()==true)
+            {
+                MultipartFormDataContent content = new MultipartFormDataContent();
+                foreach ( var file in openFileDialog.FileNames)
+                {
+                    FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                    string filename = System.IO.Path.GetFileName(file);
+                  
+                    content.Add(new StreamContent(fileStream), "files", filename);
+                }
+
+                HttpRequestMessage message = new HttpRequestMessage();
+                message.Content = content;
+                message.Method = HttpMethod.Post;
+                message.RequestUri = new Uri("http://localhost:5232/dbfiles");
+
+                HttpClient client = new HttpClient();
+                HttpResponseMessage response = await client.SendAsync(message);
+                if (response.IsSuccessStatusCode)
+                {
+                    
+                    var files = JsonConvert.DeserializeObject<List<DbFile>>(await response.Content.ReadAsStringAsync());
+                    ForFileGrid.Items.Add(files);
+                    MessageBox.Show($"Файл(ы) успешно добавлен(ы)");
+                    
+                }
+            }
 
         }
 
@@ -52,15 +80,36 @@ namespace TestWpfClient
                 var files = JsonConvert.DeserializeObject<List<DbFile>>(
                      await response.Content.ReadAsStringAsync());
                 ForFileGrid.ItemsSource = files;
-                
-
-                
-
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            SaveFileDialog saveFile = new SaveFileDialog();
+            if (saveFile.ShowDialog()==true)
+            {
+
+            }
+           
+
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            DbFile delf = (DbFile)ForFileGrid.SelectedItem;
+            
+            HttpRequestMessage request = new HttpRequestMessage();
+            request.Method = HttpMethod.Delete;
+            request.RequestUri = new Uri($"http://localhost:5232/dbfiles/{delf.Id}");
+            
+            HttpClient client = new HttpClient();
+            
+            HttpResponseMessage response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                MessageBox.Show($"{json} успешно удален");
+            }
 
         }
     }
