@@ -32,6 +32,8 @@ namespace TestWpfClient
         public MainWindow()
         {
             InitializeComponent();
+            RegWindow regWindow = new RegWindow();
+            regWindow.Show();
             ForUploadBut.Click += ForUploadBut_Click;
         }
 

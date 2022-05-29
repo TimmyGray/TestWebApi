@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWebApi", "TestWebApi\TestWebApi.csproj", "{5448108E-EE16-48E0-A187-422BEE93CDB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWpfClient", "TestWpfClient\TestWpfClient.csproj", "{06A06E1A-C258-4805-A4CF-D47E209850D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWpfClient", "TestWpfClient\TestWpfClient.csproj", "{1831ABEA-ADD3-4FB8-9878-A5BAF12C90EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{5448108E-EE16-48E0-A187-422BEE93CDB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5448108E-EE16-48E0-A187-422BEE93CDB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5448108E-EE16-48E0-A187-422BEE93CDB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06A06E1A-C258-4805-A4CF-D47E209850D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06A06E1A-C258-4805-A4CF-D47E209850D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06A06E1A-C258-4805-A4CF-D47E209850D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06A06E1A-C258-4805-A4CF-D47E209850D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1831ABEA-ADD3-4FB8-9878-A5BAF12C90EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1831ABEA-ADD3-4FB8-9878-A5BAF12C90EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1831ABEA-ADD3-4FB8-9878-A5BAF12C90EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1831ABEA-ADD3-4FB8-9878-A5BAF12C90EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

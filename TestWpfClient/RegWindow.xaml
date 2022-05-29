@@ -1,0 +1,34 @@
+﻿<Window x:Class="TestWpfClient.RegWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestWpfClient"
+        mc:Ignorable="d"
+        Title="RegWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Top" Height="29*"></RowDefinition>
+            <RowDefinition x:Name="Header" Height="117*"></RowDefinition>
+            <RowDefinition x:Name="ForLoginRow" Height="82*"></RowDefinition>
+            <RowDefinition x:Name="ForPassRow" Height="78*"></RowDefinition>
+            <RowDefinition x:Name="ForButRow" Height="82*"></RowDefinition>
+            <RowDefinition x:Name="Bot" Height="46*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36">Регистрация/Авторизация</TextBlock>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock FontSize="24" VerticalAlignment="Center">Введите логин:</TextBlock>
+            <TextBox x:Name="ForLoginBox" Height="36" MinWidth="200"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock FontSize="24" VerticalAlignment="Center">Введите пароль:</TextBlock>
+            <TextBox x:Name="ForPassBox" Height="36" MinWidth="200"></TextBox>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+            <Button x:Name="ForRegBut" Margin="5" FontSize="18" MaxWidth="200">Зарегистрироваться</Button>
+            <Button x:Name="ForEnterBut" Margin="5" FontSize="18" MaxWidth="200">Войти</Button>
+        </StackPanel>
+
+    </Grid>
+    
+</Window>
