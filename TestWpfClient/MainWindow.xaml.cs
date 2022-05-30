@@ -32,11 +32,11 @@ namespace TestWpfClient
         public MainWindow()
         {
             InitializeComponent();
-            RegWindow regWindow = new RegWindow();
-            regWindow.Show();
+            
+            
             ForUploadBut.Click += ForUploadBut_Click;
         }
-
+        
         private async void ForUploadBut_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -128,21 +128,37 @@ namespace TestWpfClient
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            ForFileGrid.ItemsSource = files;
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.BaseAddress = new Uri("http://localhost:5000/");
             HttpResponseMessage response = await client.GetAsync("dbfiles");
-
+          
             if (response.IsSuccessStatusCode)
             {
-                var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
-                    await response.Content.ReadAsStringAsync());
-                foreach(var file in download)
+                var content = await response.Content.ReadAsStringAsync();
+                if (content=="\"Нужна авторизация!\"")
                 {
-                    files.Add(file);
 
+                    RegWindow regWindow = new RegWindow();
+                    regWindow.Show();
+                    regWindow.Owner = this;
+                    IsEnabled = false;
                 }
-                ForFileGrid.ItemsSource = files;
+                else
+                {
+                    MessageBox.Show("LSAD");
+                    var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
+                        await response.Content.ReadAsStringAsync());
+                    foreach (var file in download)
+                    {
+                        files.Add(file);
+
+                    }
+                    
+                }
+               
             }
 
         }

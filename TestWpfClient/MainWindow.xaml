@@ -34,7 +34,7 @@
                 <DataGridTextColumn x:Name="NameCol" Header="Имя" Binding="{Binding Path=Name}" Width="200"></DataGridTextColumn>
                 <DataGridTextColumn x:Name="SizeCol" Header="Размер, Мб" Binding="{Binding Path=Size}" Width="200"></DataGridTextColumn>
                 <DataGridTextColumn x:Name="TypeCol" Header="Тип" Binding="{Binding Path=Type}" Width="100"></DataGridTextColumn>
-
+                
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         

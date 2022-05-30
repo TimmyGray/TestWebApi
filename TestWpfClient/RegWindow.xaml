@@ -25,8 +25,8 @@
             <TextBox x:Name="ForPassBox" Height="36" MinWidth="200"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Name="ForRegBut" Margin="5" FontSize="18" MaxWidth="200">Зарегистрироваться</Button>
-            <Button x:Name="ForEnterBut" Margin="5" FontSize="18" MaxWidth="200">Войти</Button>
+            <Button x:Name="ForRegBut" Margin="5" FontSize="18" MaxWidth="220" Click="ForRegBut_Click">Зарегистрироваться</Button>
+            <Button  x:Name="ForEnterBut" Margin="5" FontSize="18" MaxWidth="220" Click="ForEnterBut_Click">Войти</Button>
         </StackPanel>
 
     </Grid>

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace TestWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class DbFilesController : ControllerBase
@@ -25,6 +26,8 @@ namespace TestWebApi.Controllers
             
 
         }
+
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DbFile>>> GetAll()
         {
