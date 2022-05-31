@@ -20,30 +20,30 @@
             <ColumnDefinition x:Name="LeftPad1" Width="19*"></ColumnDefinition>
             <ColumnDefinition x:Name="LeftPad2" Width="221*" ></ColumnDefinition>
             <ColumnDefinition x:Name="ForLabel" Width="321*"></ColumnDefinition>
-            <ColumnDefinition x:Name="ForLoginLabel" Width="143*"></ColumnDefinition>
-            <ColumnDefinition x:Name="ForLogoutBut" Width="77*"></ColumnDefinition>
+            <ColumnDefinition x:Name="ForLoginLabel" Width="99*"></ColumnDefinition>
+            <ColumnDefinition x:Name="ForLogoutBut" Width="121*"></ColumnDefinition>
             <ColumnDefinition x:Name="RightPad" Width="19*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Label Grid.Column="2"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Height="42" Width="126">File Keeper</Label>
-        <Label Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">Имя пользователя</Label>
-        <Button Grid.Column="4" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" UseLayoutRounding="False">Выйти</Button>
-        <Button Grid.Column="4" Grid.Row="2" x:Name="ForUploadBut" HorizontalAlignment="Center" VerticalAlignment="Center">Загрузить</Button>
-        <DataGrid  x:Name="ForFileGrid" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" AutoGenerateColumns="False"  Margin="1" RowBackground="Bisque" AlternatingRowBackground="BurlyWood" CanUserResizeColumns="False" IsReadOnly="True"  >
+        <Label Grid.Column="3" x:Name="LoginLabel" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="40" MinHeight="20"></Label>
+        <Button Grid.Column="4" Name="LougOutBut" VerticalAlignment="Center" UseLayoutRounding="False" Click="LougOutBut_Click" Height="20" Margin="6,0,0,0" HorizontalAlignment="Left" Width="109">Выйти из профиля</Button>
+        <Button Grid.Column="4" Grid.Row="2" x:Name="ForUploadBut" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="58">Загрузить</Button>
+        <DataGrid  x:Name="ForFileGrid" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="4" AutoGenerateColumns="False"  Margin="1,1,1,1" RowBackground="Bisque" AlternatingRowBackground="BurlyWood" CanUserResizeColumns="False" IsReadOnly="True"  >
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="IdCol"  Binding="{Binding Path=Id}"></DataGridTextColumn>
+                <DataGridTextColumn x:Name="IdCol" Visibility="Collapsed"  Binding="{Binding Path=Id}"></DataGridTextColumn>
                 <DataGridTextColumn x:Name="NameCol" Header="Имя" Binding="{Binding Path=Name}" Width="200"></DataGridTextColumn>
                 <DataGridTextColumn x:Name="SizeCol" Header="Размер, Мб" Binding="{Binding Path=Size}" Width="200"></DataGridTextColumn>
                 <DataGridTextColumn x:Name="TypeCol" Header="Тип" Binding="{Binding Path=Type}" Width="100"></DataGridTextColumn>
-                
+
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
-                        
+
                         <DataTemplate>
                             <Button Click="Button_Click">
                                 Скачать
                             </Button>
                         </DataTemplate>
-                   
+
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Width="100">

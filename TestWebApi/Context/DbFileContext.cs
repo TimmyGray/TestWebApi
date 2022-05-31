@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
 using TestWebApi.Models;
-using System.Threading.Tasks;
 namespace TestWebApi.Context
 {
     public class DbFileContext : DbContext
     {
         public DbSet<DbFile> Files => Set<DbFile>();
         public DbSet<User> Users =>Set<User>();
+        public DbSet<DataFile> DataFiles => Set<DataFile>();
 
         public DbFileContext(DbContextOptions<DbFileContext> options):base(options)
         {

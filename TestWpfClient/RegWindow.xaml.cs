@@ -1,20 +1,9 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TestWebApi.Models;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Collections.ObjectModel;
 
 namespace TestWpfClient
 {
@@ -23,44 +12,94 @@ namespace TestWpfClient
     /// </summary>
     public partial class RegWindow : Window
     {
-        public RegWindow()
+        Label ForLoginLabel;
+        HttpClient client;
+        ObservableCollection<DbFile> files;
+        public RegWindow(Label ForLoginLabel, HttpClient client, ObservableCollection<DbFile> files)
         {
             InitializeComponent();
+            this.ForLoginLabel = ForLoginLabel;
+            this.client = client;
+            this.files = files;
         }
 
         private async void ForRegBut_Click(object sender, RoutedEventArgs e)
         {
-            AuthorizeModel authorizeModel = new AuthorizeModel();
-            authorizeModel.Login = ForLoginBox.Text;
-            authorizeModel.Password = ForPassBox.Text;
-            var content = JsonConvert.SerializeObject(authorizeModel);
-            
-            HttpRequestMessage request = new HttpRequestMessage();
-            
-            request.RequestUri = new Uri("http://localhost:5000/users");
-            request.Method = HttpMethod.Post;
-            request.Content = new StringContent(content, Encoding.UTF8, "application/json");
-                
-            HttpClient client = new HttpClient();
-            
-            HttpResponseMessage response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                var reguser = response.Content.ReadAsStringAsync().Result;
-                MessageBox.Show(reguser);
-                Owner.IsEnabled = true;
-                Close();
-            }
-           
-            
 
-            
-            
-        
+            if (ForLoginBox.Text==null&&ForPassBox.Text==null)
+            {
+                MessageBox.Show("Поля должны быть заполнены");
+            }
+            else
+            {
+                AuthorizeModel authorizeModel = new AuthorizeModel { Login = ForLoginBox.Text, Password = ForPassBox.Text };
+
+                using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/registration", authorizeModel))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
+                        MessageBox.Show($"{authorizeModel.Login} успешно добавлен!");
+                        Owner.IsEnabled = true;
+                        ForLoginLabel.Content = authorizeModel.Login;
+
+                        foreach (DbFile file in download)
+                        {
+                            files.Add(file);
+                        }
+
+                        Close();
+                        
+                    }
+                    else
+                    {
+                        var error = response.Content.ReadAsStringAsync().Result;
+                        MessageBox.Show(error);
+
+                    }
+                }
+                
+            }
+                
         }
 
-        private void ForEnterBut_Click(object sender, RoutedEventArgs e)
+        private async void ForEnterBut_Click(object sender, RoutedEventArgs e)
         {
+
+            if (ForLoginBox.Text == null && ForPassBox.Text == null)
+            {
+                MessageBox.Show("Все поля должны быть заполнены");
+
+            }
+            else
+            {
+                AuthorizeModel login = new AuthorizeModel { Login = ForLoginBox.Text, Password = ForPassBox.Text };
+
+                using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/login", login))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
+                        Owner.IsEnabled = true;
+                        ForLoginLabel.Content = login.Login;
+
+                        foreach (DbFile file in download)
+                        {
+                            files.Add(file);
+                        }
+
+                        Close();
+                     
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show(error);
+                    
+                    }
+                }
+                
+            }
 
         }
     }

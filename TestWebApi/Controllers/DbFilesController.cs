@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestWebApi.Context;
 using TestWebApi.Models;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace TestWebApi.Controllers
@@ -31,15 +25,16 @@ namespace TestWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DbFile>>> GetAll()
         {
-           return await  db.Files.ToListAsync();
-          
+
+            return await db.Files.Where(u => u.User == User.Identity.Name).ToListAsync();
+
         }
 
         [HttpGet("{id}")]
 
-        public async Task<ActionResult<DbFile>> GetOne(int id)
+        public async Task<ActionResult<DataFile>> GetOne(int id)
         {
-            DbFile newf = await db.Files.FirstOrDefaultAsync(f => f.Id == id);
+            DbFile newf = await db.Files.Include(d=>d.File).FirstOrDefaultAsync(f => f.Id == id);
             if (newf != null)
             {
                 return new ObjectResult(newf);
@@ -47,33 +42,47 @@ namespace TestWebApi.Controllers
             return NotFound(newf);
         }
 
+
         [HttpPost]
+
         public async Task<ActionResult<IEnumerable<DbFile>>> Post(IFormFileCollection files)
         {
-            if (files == null)
+            if (files == null||files.Count==0)
             {
                 return BadRequest("Нужно загрузить файл");
             }
+
+            Regex reg = new Regex(@"\.\w*$");
+
             List<DbFile> forresponse = new List<DbFile>();
+           // User user = await db.Users.FirstOrDefaultAsync(u => u.Login == User.Identity.Name);
+            
             foreach (FormFile file in files)
             {
                 DbFile newf = new DbFile();
-                Regex reg = new Regex(@"\.\w*$");
+                DataFile newdata = new DataFile();
+                //newdata.File = newf;
+                newf.File = newdata;
+
                 string type = reg.Match(file.FileName).Value;
-                string[] nameandtype = file.FileName.Split(".");
-                newf.Name = nameandtype[0];
-                newf.Size = file.Length/1024000f;
+                string[] name = file.FileName.Split(".");                       //необходимо доработать алгоритм
+                
+                newf.Name = name[0];
+                newf.Size = file.Length / 1024000f;                     //необходимо доработать алгоритм
+
                 using (var reader = new BinaryReader(file.OpenReadStream()))
                 {
-                    newf.Data = reader.ReadBytes((int)file.Length);
+                    newdata.Data = reader.ReadBytes((int)file.Length);
                 }
+
                 newf.Type = type;
+                newf.User = User.Identity.Name;
                 db.Files.Add(newf);
+                db.DataFiles.Add(newdata);
                 await db.SaveChangesAsync();
-                newf = await db.Files.OrderByDescending(f=>f.Id).FirstOrDefaultAsync();
-                forresponse.Add(newf);
 
             }
+            forresponse = await db.Files.Where(u=>u.User==User.Identity.Name).OrderByDescending(f => f.Id).ToListAsync();
             return forresponse;
 
         }
@@ -82,9 +91,11 @@ namespace TestWebApi.Controllers
 
         public async Task<ActionResult<DbFile>> Delete(int id)
         {
-            DbFile file = await db.Files.FirstOrDefaultAsync(x => x.Id == id);
+            DbFile file = await db.Files.Include(d=>d.File).FirstOrDefaultAsync(x => x.Id == id);
             if (file != null)
             {
+                DataFile data = file.File;
+                db.DataFiles.Remove(data);
                 db.Files.Remove(file);
                 await db.SaveChangesAsync();
                 return Ok(file.Name);
