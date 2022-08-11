@@ -27,6 +27,7 @@ namespace TestWpfClient
             files = new ObservableCollection<DbFile>();
 
             client = new HttpClient();
+           
             client.BaseAddress = new Uri("http://localhost:5000");
 
             ForUploadBut.Click += ForUploadBut_Click;
@@ -51,7 +52,7 @@ namespace TestWpfClient
                 request.Method = HttpMethod.Post;
                 request.RequestUri = new Uri(client.BaseAddress, "/dbfiles");
                 request.Content = content;
-
+                
                 using (HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
                 {
                     if (response.IsSuccessStatusCode)
@@ -80,7 +81,6 @@ namespace TestWpfClient
                 saveFile.Title = "Скачать файл";
                
                 string path = $"{saveFile.FileName}{downfile.Type}"; 
-
                
                 using (HttpResponseMessage response = await client.GetAsync($"/dbfiles/{downfile.Id}"))
                 {
@@ -88,10 +88,10 @@ namespace TestWpfClient
                     {
                         var file = JsonConvert.DeserializeObject<DbFile>(await response.Content.ReadAsStringAsync());
                         
-                        using (FileStream stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
+                        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
                         {
 
-                            stream.WriteAsync(file.File.Data, 0, file.File.Data.Length);
+                           await stream.WriteAsync(file.File.Data, 0, file.File.Data.Length);
 
                         }
                         MessageBox.Show("Файл скачен");
