@@ -3,10 +3,84 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TestWpfClient"
         mc:Ignorable="d"
-        Title="RegWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner" WindowStyle="None"
+        Title="RegWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
        >
+    <Window.Resources>
+        <ControlTemplate TargetType="Button" x:Key="regbut">
+            <Border 
+                    x:Name="borderbut"
+                    CornerRadius="10" 
+                    BorderThickness="2"
+                    Height="{TemplateBinding Height}" 
+                    Width="{TemplateBinding Width}">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="BlueViolet"/>
+                        <GradientStop Color="Blue" Offset="2"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <Border.Background>
+                    <RadialGradientBrush GradientOrigin="0.5,0.5">
+                        <GradientStop Color="BlueViolet" Offset="2"/>
+                        <GradientStop Color="#FF4A135F" Offset="0.1"/>
+                    </RadialGradientBrush>
+                </Border.Background>
+                <ContentControl
+                    x:Name="contentbut"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" 
+                    Content="{TemplateBinding Content}"
+                    Foreground="{TemplateBinding Foreground}"
+                    FontSize="18" 
+                    MaxWidth="240" 
+                    Margin="2"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="borderbut" Property="BorderBrush" Value="red"/>
+                    <Setter TargetName="contentbut"  Property="Foreground" Value="red"/>
+                    <Setter TargetName="borderbut" Property="Background" Value="violet"/>
+                    <Setter Property ="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="borderbut" Property="Background" Value="green"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate TargetType="TextBox" x:Key="regbox">
+            <Border
+                x:Name="borderbox"
+                CornerRadius="10"
+                Height="36"
+                MinWidth="200"
+                Background="#FFC099D8">
+                <ContentControl
+                    x:Name="contentbox"
+                    Content="{TemplateBinding Text}"
+                    FontSize="20"
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center"
+                    >
+                </ContentControl>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="borderbox" Property="BorderThickness" Value="2"/>
+                    <Setter TargetName="borderbox" Property="BorderBrush" Value="red"/>
+                    <Setter TargetName="borderbox" Property="Background" Value="white"/>
+                    <Setter Property ="Cursor" Value="Hand"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="true">
+                    <Setter TargetName="borderbox" Property="BorderThickness" Value="2"/>
+                    <Setter TargetName="borderbox" Property="BorderBrush" Value="red"/>
+                    <Setter TargetName="borderbox" Property="Background" Value="white"/>
+                    <Setter Property ="Cursor" Value="Hand"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </Window.Resources>
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black"/>
@@ -26,28 +100,18 @@
         <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36" Foreground="#FFFD3212">Регистрация/Авторизация</TextBlock>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock FontSize="24" VerticalAlignment="Center" Foreground="White">Введите логин:</TextBlock>
-            <TextBox x:Name="ForLoginBox" Height="36" MinWidth="200"></TextBox>
+            <TextBox x:Name="ForLoginBox" Template="{StaticResource regbox}"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock FontSize="24" VerticalAlignment="Center" Foreground="White">Введите пароль:</TextBlock>
-            <TextBox x:Name="ForPassBox" Height="36" MinWidth="200"></TextBox>
+            <TextBox x:Name="ForPassBox"  Template="{StaticResource regbox}"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Name="ForRegBut" Margin="5" FontSize="18" MaxWidth="220" Click="ForRegBut_Click" BorderThickness="4" Foreground="White" Background="#FF8E1FDE">
-                <Button.BorderBrush>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF0D136F" Offset="0.033"/>
-                        <GradientStop Color="#FFBD0DC7" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.BorderBrush> Зарегистрироваться
+            <Button x:Name="ForRegBut" Margin="5"  Click="ForRegBut_Click" Template="{StaticResource regbut}" Foreground="#FFECC6B9">
+                Зарегистрироваться
             </Button>
-            <Button  x:Name="ForEnterBut" Margin="5" FontSize="18" MaxWidth="220" Click="ForEnterBut_Click" BorderThickness="4" Background="#FF8B08EA" Foreground="White">
-                <Button.BorderBrush>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF2013BF"/>
-                        <GradientStop Color="#FFC60EDA" Offset="1"/>
-                    </LinearGradientBrush>
-                </Button.BorderBrush> Войти</Button>
+            <Button  x:Name="ForEnterBut" Margin="5,3" Click="ForEnterBut_Click" Template="{StaticResource regbut}" Foreground="#FFE0616C">
+                Войти</Button>
         </StackPanel>
 
     </Grid>
