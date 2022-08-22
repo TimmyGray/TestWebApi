@@ -4,97 +4,94 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ResizeMode="NoResize">
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        Style="{StaticResource window}">
     <Window.Resources>
-        <ControlTemplate TargetType="Button" x:Key="regbut">
-            <Border 
-                    x:Name="borderbut"
-                    CornerRadius="10" 
-                    BorderThickness="2"
-                    Height="{TemplateBinding Height}" 
-                    Width="{TemplateBinding Width}">
-                <Border.BorderBrush>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="BlueViolet"/>
-                        <GradientStop Color="Blue" Offset="2"/>
-                    </LinearGradientBrush>
-                </Border.BorderBrush>
-                <Border.Background>
-                    <RadialGradientBrush GradientOrigin="0.5,0.5">
-                        <GradientStop Color="BlueViolet" Offset="2"/>
-                        <GradientStop Color="#FF4A135F" Offset="0.1"/>
-                    </RadialGradientBrush>
-                </Border.Background>
-                <ContentControl
-                    x:Name="contentbut"
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Center" 
-                    Content="{TemplateBinding Content}"
-                    Foreground="{TemplateBinding Foreground}"
-                    FontSize="18" 
-                    MaxWidth="240" 
-                    Margin="2"/>
-            </Border>
-        </ControlTemplate>
-        <ControlTemplate TargetType="TextBox" x:Key="regbox">
-            <Border
-                x:Name="borderbox"
-                CornerRadius="10"
-                Height="36"
-                MinWidth="200"
-                Background="#FFC099D8">
-                <ContentControl
-                    x:Name="contentbox"
-                    Content="{TemplateBinding Text}"
-                    FontSize="20"
-                    HorizontalAlignment="Left" 
-                    VerticalAlignment="Center"
-                    >
-                </ContentControl>
-            </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="borderbox" Property="BorderThickness" Value="2"/>
-                    <Setter TargetName="borderbox" Property="BorderBrush" Value="red"/>
-                    <Setter TargetName="borderbox" Property="Background" Value="white"/>
-                    <Setter Property ="Cursor" Value="Hand"/>
-                </Trigger>
-                <Trigger Property="IsFocused" Value="true">
-                    <Setter TargetName="borderbox" Property="BorderThickness" Value="2"/>
-                    <Setter TargetName="borderbox" Property="BorderBrush" Value="red"/>
-                    <Setter TargetName="borderbox" Property="Background" Value="white"/>
-                    <Setter Property ="Cursor" Value="Hand"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
+
         
+
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Top" Height="29*"></RowDefinition>
             <RowDefinition x:Name="Header" Height="117*"></RowDefinition>
             <RowDefinition x:Name="ForLoginRow" Height="82*"></RowDefinition>
             <RowDefinition x:Name="ForPassRow" Height="78*"></RowDefinition>
-            <RowDefinition x:Name="ForButRow" Height="82*"></RowDefinition>
-            <RowDefinition x:Name="Bot" Height="46*"></RowDefinition>
+            <RowDefinition x:Name="ForButRow" Height="105*"></RowDefinition>
+            <RowDefinition x:Name="Bot" Height="23*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36" Foreground="#FFFD3212">Регистрация/Авторизация</TextBlock>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock FontSize="24" VerticalAlignment="Center" Foreground="White">Введите логин:</TextBlock>
-            <TextBox x:Name="ForLoginBox" Template="{StaticResource regbox}"></TextBox>
+        <TextBlock Grid.Row="1" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" 
+                   FontSize="36" 
+                   Foreground="#FFFD3212" Height="47" Width="434">
+            Регистрация/Авторизация
+        </TextBlock>
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" Margin="0,117,0,0" Grid.RowSpan="2">
+            <TextBlock
+                Margin="0,0,4,0"
+                FontSize="24" 
+                VerticalAlignment="Center" 
+                Foreground="{StaticResource mainforecolor}">
+                Введите логин:
+            </TextBlock>
+            <TextBox
+                Margin="12,0,0,0"
+                x:Name="ForLoginBox" 
+                Template="{DynamicResource regbox}"
+                CaretBrush="Black">
+
+            </TextBox>
         </StackPanel>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock FontSize="24" VerticalAlignment="Center" Foreground="White">Введите пароль:</TextBlock>
-            <TextBox x:Name="ForPassBox"  Template="{StaticResource regbox}"></TextBox>
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" Margin="0,82,0,0" Grid.RowSpan="2">
+            <TextBlock 
+                FontSize="24" 
+                VerticalAlignment="Center" 
+                Foreground="{StaticResource mainforecolor}">
+                Введите пароль:
+            </TextBlock>
+            <TextBox 
+                x:Name="ForPassBox"  
+                Template="{DynamicResource regbox}"
+                CaretBrush="Black">
+
+            </TextBox>
         </StackPanel>
-        <StackPanel Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Name="ForRegBut" Margin="5"  Click="ForRegBut_Click" Template="{StaticResource regbut}" Foreground="#FFECC6B9">
+        <DockPanel Grid.Row="4" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center">
+            <Button 
+                x:Name="ForRegBut" 
+                DockPanel.Dock="Top"
+                Margin="0,0,0,10"
+                Height="40"
+                Click="ForRegBut_Click" 
+                Style="{DynamicResource regbut}"  
+                Foreground="#FFECC6B9"
+                FontSize="20"
+                >
                 Зарегистрироваться
             </Button>
-            <Button  x:Name="ForEnterBut" Margin="5,3" Click="ForEnterBut_Click" Template="{StaticResource regbut}" Foreground="#FFE0616C">
+            <Button  
+                x:Name="ForEnterBut"
+                DockPanel.Dock="Bottom"
+                Height="40"
+                Click="ForEnterBut_Click" 
+                Style="{DynamicResource regbut}"
+                FontSize="20"
+                Foreground="#FFE0616C"
+                >
                 Войти</Button>
-        </StackPanel>
+        </DockPanel>
 
     </Grid>
 

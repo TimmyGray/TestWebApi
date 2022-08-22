@@ -7,10 +7,16 @@
        
         mc:Ignorable="d"
         Height="450" Width="800"
-        Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowState="Normal" WindowStyle="ToolWindow">
+        Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="NoResize"
+        WindowState="Normal"
+        WindowStyle="ToolWindow"
+        Style="{StaticResource window}">
     <Window.Resources>
-        <ResourceDictionary Source="Mystylus.xaml"/>
+
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Fortools" Height="20"></RowDefinition>
@@ -22,46 +28,82 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftPad1" Width="19*"></ColumnDefinition>
-            <ColumnDefinition x:Name="LeftPad2" Width="221*" ></ColumnDefinition>
-            <ColumnDefinition x:Name="ForLabel" Width="321*"></ColumnDefinition>
-            <ColumnDefinition x:Name="ForLoginLabel" Width="99*"></ColumnDefinition>
+            <ColumnDefinition x:Name="LeftPad2" Width="261*" ></ColumnDefinition>
+            <ColumnDefinition x:Name="ForLabel" Width="241*"></ColumnDefinition>
+            <ColumnDefinition x:Name="ForLoginLabel" Width="139*"></ColumnDefinition>
             <ColumnDefinition x:Name="ForLogoutBut" Width="121*"></ColumnDefinition>
             <ColumnDefinition x:Name="RightPad" Width="19*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="1" Grid.Column="2"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Height="42" Width="126">File Keeper</Label>
-        <Label Grid.Row="1" Grid.Column="3" x:Name="LoginLabel" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="40" MinHeight="20"></Label>
-        <Button Grid.Row ="1" Grid.Column="4" Name="LougOutBut" VerticalAlignment="Center" UseLayoutRounding="False" Click="LougOutBut_Click" Height="20" Margin="6,0,0,0" HorizontalAlignment="Left" Width="109">Выйти из профиля</Button>
-        <Button Grid.Column="4" Grid.Row="3" x:Name="ForUploadBut" HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="58">Загрузить</Button>
-        <DataGrid  x:Name="ForFileGrid" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="4" AutoGenerateColumns="False"  Margin="1,1,1,1" RowBackground="Bisque" AlternatingRowBackground="BurlyWood" CanUserResizeColumns="False" IsReadOnly="True"  >
+        <Label Grid.Row="1" Grid.Column="2"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               FontSize="24"
+               Height="42"
+               Width="126"
+               Foreground="{StaticResource mainforecolor}">
+            File Keeper
+        </Label>
+        <Label Grid.Row="1" Grid.Column="3"
+               x:Name="LoginLabel"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               MinWidth="40"
+               MinHeight="20"
+               Foreground="Violet"
+               FontSize="20">
+
+        </Label>
+        <Button Grid.Row ="1" Grid.Column="4" 
+                Name="LougOutBut" 
+                UseLayoutRounding="False" 
+                Click="LougOutBut_Click" 
+                Style="{StaticResource regbut}"
+                Foreground="{StaticResource mainforecolor}"
+                >
+            Выйти из профиля
+        </Button>
+        <Button Grid.Column="4" Grid.Row="2" 
+                x:Name="ForUploadBut" 
+                Style="{StaticResource regbut}"
+                Foreground="{StaticResource mainforecolor}"
+                Margin="0,20,0,0" Grid.RowSpan="2">
+            Загрузить
+        </Button>
+        <DataGrid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="4" 
+                  x:Name="ForFileGrid" 
+                  AutoGenerateColumns="False"  
+                  Margin="1,4,1,1" 
+                  RowBackground="DarkMagenta" 
+                  AlternatingRowBackground="DarkViolet" 
+                  CanUserResizeColumns="False" 
+                  IsReadOnly="True" Background="#FF0D092B">
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="IdCol" Visibility="Collapsed"  Binding="{Binding Path=Id}"></DataGridTextColumn>
-                <DataGridTextColumn x:Name="NameCol" Header="Имя" Binding="{Binding Path=Name}" Width="200"></DataGridTextColumn>
-                <DataGridTextColumn x:Name="SizeCol" Header="Размер, Мб" Binding="{Binding Path=Size}" Width="200"></DataGridTextColumn>
-                <DataGridTextColumn x:Name="TypeCol" Header="Тип" Binding="{Binding Path=Type}" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn x:Name="NameCol" Foreground="{StaticResource secondcolour}" Header="Имя" Binding="{Binding Path=Name}" Width="200"></DataGridTextColumn>
+                <DataGridTextColumn x:Name="SizeCol" Foreground="{StaticResource secondcolour}" Header="Размер, Мб" Binding="{Binding Path=Size}" Width="200"></DataGridTextColumn>
+                <DataGridTextColumn x:Name="TypeCol" Foreground="{StaticResource secondcolour}" Header="Тип" Binding="{Binding Path=Type}" Width="100"></DataGridTextColumn>
 
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
-
                         <DataTemplate>
-                            <Button Click="Button_Click">
+                            <Button Click="Button_Click" Style="{StaticResource regbut}">
                                 Скачать
                             </Button>
                         </DataTemplate>
-
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
 
                         <DataTemplate>
-                            <Button Click="Button_Click_1">
+                            <Button Click="Button_Click_1" Style="{StaticResource regbut}">
                                 Удалить
                             </Button>
                         </DataTemplate>
 
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
 
             </DataGrid.Columns>
 

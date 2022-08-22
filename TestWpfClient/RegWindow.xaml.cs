@@ -41,6 +41,7 @@ namespace TestWpfClient
                         var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
                         MessageBox.Show($"{authorizeModel.Login} успешно добавлен!");
                         Owner.IsEnabled = true;
+                        Owner.Show();
                         ForLoginLabel.Content = authorizeModel.Login;
 
                         foreach (DbFile file in download)
@@ -81,6 +82,8 @@ namespace TestWpfClient
                     {
                         var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
                         Owner.IsEnabled = true;
+                       
+                        Owner.Show();
                         ForLoginLabel.Content = login.Login;
 
                         foreach (DbFile file in download)

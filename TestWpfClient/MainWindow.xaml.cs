@@ -23,6 +23,7 @@ namespace TestWpfClient
         {
             InitializeComponent();
             IsEnabled = false;
+           
 
             files = new ObservableCollection<DbFile>();
 
@@ -136,12 +137,14 @@ namespace TestWpfClient
                     if (content == "\"Нужна авторизация!\"")
                     {
                         RegWindow regWindow = new RegWindow(LoginLabel, client, files);
+                        Hide();
                         regWindow.Show();
                         regWindow.Owner = this;
 
                     }
                     else
                     {
+                        Show();
                         var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
                             await response.Content.ReadAsStringAsync());
                         foreach (var file in download)
@@ -165,6 +168,7 @@ namespace TestWpfClient
             files.Clear();
             IsEnabled = false;
             RegWindow regWindow = new RegWindow(LoginLabel, client, files);
+            Hide();
             regWindow.Show();
             regWindow.Owner = this;
 
