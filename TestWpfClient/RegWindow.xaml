@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="RegWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
-       >
+        Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ResizeMode="NoResize">
     <Window.Resources>
         <ControlTemplate TargetType="Button" x:Key="regbut">
             <Border 
@@ -36,17 +35,6 @@
                     MaxWidth="240" 
                     Margin="2"/>
             </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter TargetName="borderbut" Property="BorderBrush" Value="red"/>
-                    <Setter TargetName="contentbut"  Property="Foreground" Value="red"/>
-                    <Setter TargetName="borderbut" Property="Background" Value="violet"/>
-                    <Setter Property ="Cursor" Value="Hand"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="true">
-                    <Setter TargetName="borderbut" Property="Background" Value="green"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
         </ControlTemplate>
         <ControlTemplate TargetType="TextBox" x:Key="regbox">
             <Border
@@ -79,15 +67,9 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
-
+        
     </Window.Resources>
-    <Window.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black"/>
-            <GradientStop Color="#FF071561" Offset="1"/>
-            <GradientStop Color="#FF570A6F" Offset="0.33"/>
-        </LinearGradientBrush>
-    </Window.Background>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="Top" Height="29*"></RowDefinition>
