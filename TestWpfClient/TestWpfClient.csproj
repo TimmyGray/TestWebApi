@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\css-loaders-144.gif" />
+    <None Remove="Resources\Screen.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,17 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <SplashScreen Include="Resources\Screen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </SplashScreen>
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Update="MainWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <SplashScreen Include="Resources\css-loaders-144.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </SplashScreen>
   </ItemGroup>
 
 </Project>

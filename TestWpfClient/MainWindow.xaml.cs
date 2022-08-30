@@ -40,33 +40,46 @@ namespace TestWpfClient
             openFileDialog.Multiselect = true;
             if (openFileDialog.ShowDialog()==true)
             {
-                MultipartFormDataContent content = new MultipartFormDataContent();
-                foreach ( var file in openFileDialog.FileNames)
+                using (MultipartFormDataContent content = new MultipartFormDataContent())
                 {
-                    FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-                    string filename = Path.GetFileName(file);
-                  
-                    content.Add(new StreamContent(fileStream), "files", filename);
-                }
-
-                HttpRequestMessage request = new HttpRequestMessage();
-                request.Method = HttpMethod.Post;
-                request.RequestUri = new Uri(client.BaseAddress, "/dbfiles");
-                request.Content = content;
-                
-                using (HttpResponseMessage response = await client.SendAsync(request, HttpCompletionOption.ResponseContentRead))
-                {
-                    if (response.IsSuccessStatusCode)
+                    foreach (var file in openFileDialog.FileNames)
                     {
-                        var addfiles = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(await response.Content.ReadAsStringAsync());
-                        foreach (var file in addfiles)
-                        {
-                            files.Add(file);
-                        }
-                        MessageBox.Show($"Файл(ы) успешно добавлен(ы)");
-
+                        
+                        FileStream fs = File.OpenRead(file);
+                        string filename = Path.GetFileName(file);
+                        content.Add(new StreamContent(fs),"files",filename);
+                       
                     }
-                }
+
+                    try
+                    {
+                        using (HttpResponseMessage response = await client.PostAsync($"/dbfiles", content))
+                        {
+                            
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var addfiles = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(await response.Content.ReadAsStringAsync());
+                                foreach (var file in addfiles)
+                                {
+                                   
+                                    files.Add(file);
+                                    MessageBox.Show($"{file.Id}\n{file.File.Id}");
+                                }
+                                MessageBox.Show($"Файл(ы) успешно добавлен(ы)");
+
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string innermes = ex.InnerException.Message;
+                        string mes =  ex.Message;
+                        string stacktrace = ex.StackTrace;
+                        MessageBox.Show($"Что-то пошло не так - {mes}\n{innermes}\n{stacktrace}");
+                    }
+                   
+                } 
+                
                
             }
 
@@ -81,23 +94,33 @@ namespace TestWpfClient
                 DbFile downfile = (DbFile)ForFileGrid.SelectedItem;
                 saveFile.Title = "Скачать файл";
                
-                string path = $"{saveFile.FileName}{downfile.Type}"; 
-               
-                using (HttpResponseMessage response = await client.GetAsync($"/dbfiles/{downfile.Id}"))
+                string path = $"{saveFile.FileName}{downfile.Type}";
+                try
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (HttpResponseMessage response = await client.GetAsync($"/dbfiles/{downfile.Id}"))
                     {
-                        var file = JsonConvert.DeserializeObject<DbFile>(await response.Content.ReadAsStringAsync());
-                        
-                        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+                        if (response.IsSuccessStatusCode)
                         {
+                            var file = JsonConvert.DeserializeObject<DbFile>(await response.Content.ReadAsStringAsync());
 
-                           await stream.WriteAsync(file.File.Data, 0, file.File.Data.Length);
+                            using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+                            {
 
+                                await stream.WriteAsync(file.File.Data, 0, file.File.Data.Length);
+
+                            }
+                            MessageBox.Show("Файл скачен");
                         }
-                        MessageBox.Show("Файл скачен");
                     }
                 }
+                catch (Exception ex)
+                {
+                    string innermes = ex.InnerException.Message;
+                    string mes = ex.Message;
+                    string stacktrace = ex.StackTrace;
+                    MessageBox.Show($"Что-то пошло не так - {mes}\n{innermes}\n{stacktrace}");
+                }
+                
                
             }
            
@@ -107,16 +130,27 @@ namespace TestWpfClient
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             DbFile delf = (DbFile)ForFileGrid.SelectedItem;
-            
-            using (HttpResponseMessage response = await client.DeleteAsync($"/dbfiles/{delf.Id}"))
+
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (HttpResponseMessage response = await client.DeleteAsync($"/dbfiles/{delf.Id}"))
                 {
-                    string delfile = await response.Content.ReadAsStringAsync();
-                    files.Remove(files.FirstOrDefault(f => f.Id == delf.Id));
-                    MessageBox.Show($"{delfile} успешно удален");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string delfile = await response.Content.ReadAsStringAsync();
+                        files.Remove(files.FirstOrDefault(f => f.Id == delf.Id));
+                        MessageBox.Show($"{delfile} успешно удален");
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                string innermes = ex.InnerException.Message;
+                string mes = ex.Message;
+                string stacktrace = ex.StackTrace;
+                MessageBox.Show($"Что-то пошло не так - {mes}\n{innermes}\n{stacktrace}");
+            }
+           
             
         }
 
@@ -128,42 +162,62 @@ namespace TestWpfClient
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.RequestUri = new Uri(client.BaseAddress, "/dbfiles");
             request.Method = HttpMethod.Get;
-
-            using (HttpResponseMessage response = await client.SendAsync(request))
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (HttpResponseMessage response = await client.SendAsync(request))
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    if (content == "\"Нужна авторизация!\"")
+                    if (response.IsSuccessStatusCode)
                     {
-                        RegWindow regWindow = new RegWindow(LoginLabel, client, files);
-                        Hide();
-                        regWindow.Show();
-                        regWindow.Owner = this;
-
-                    }
-                    else
-                    {
-                        Show();
-                        var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
-                            await response.Content.ReadAsStringAsync());
-                        foreach (var file in download)
+                        var content = await response.Content.ReadAsStringAsync();
+                        if (content == "\"Нужна авторизация!\"")
                         {
-                            files.Add(file);
+                            RegWindow regWindow = new RegWindow(LoginLabel, client, files);
+                            Hide();
+                            regWindow.Show();
+                            regWindow.Owner = this;
+
+                        }
+                        else
+                        {
+                            Show();
+                            var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(
+                                await response.Content.ReadAsStringAsync());
+                            foreach (var file in download)
+                            {
+                                files.Add(file);
+
+                            }
 
                         }
 
                     }
-
                 }
             }
-            
+            catch (Exception ex)
+            {
+                string innermes = ex.InnerException.Message;
+                string mes = ex.Message;
+                string stacktrace = ex.StackTrace;
+                MessageBox.Show($"Что-то пошло не так - {mes}\n{innermes}\n{stacktrace}");
+            }
+
+
         }
 
         private async void LougOutBut_Click(object sender, RoutedEventArgs e)
         {
-            
-            await client.GetAsync("/users/logout");
+            try
+            {
+                await client.GetAsync("/users/logout");
+
+            }
+            catch (Exception ex)
+            {
+                string innermes = ex.InnerException.Message;
+                string mes = ex.Message;
+                string stacktrace = ex.StackTrace;
+                MessageBox.Show($"Что-то пошло не так - {mes}\n{innermes}\n{stacktrace}");
+            }
             LoginLabel.Content = "";
             files.Clear();
             IsEnabled = false;

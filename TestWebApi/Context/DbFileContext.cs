@@ -10,8 +10,8 @@ namespace TestWebApi.Context
 
         public DbFileContext(DbContextOptions<DbFileContext> options):base(options)
         {
-          //  Database.EnsureDeleted();
             Database.EnsureCreated();
+            Database.SetCommandTimeout(90);
         }
     }
 }

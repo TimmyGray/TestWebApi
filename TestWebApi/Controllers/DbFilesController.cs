@@ -35,13 +35,18 @@ namespace TestWebApi.Controllers
 
         public async Task<ActionResult<DataFile>> GetOne(int id)
         {
-            DbFile newf = await db.Files.Include(d=>d.File).FirstOrDefaultAsync(f => f.Id == id);
+            Console.WriteLine($"id файла - {id}");
+            DbFile newf =  db.Files.Include(d=>d.File).FirstOrDefault(f => f.Id == id);
+
             if (newf != null)
             {
+                Console.WriteLine($"Размер ДО декомпресии - {newf.File.Data.Length/1024000f} мБ");
 
-               await UnzipFile(newf);
+                await UnzipFile(newf);
 
-               return new ObjectResult(newf);
+                Console.WriteLine($"Размер ПОСЛЕ декомпресии - {newf.File.Data.Length/1024000f} мБ");
+
+                return new ObjectResult(newf);
 
             }
             return NotFound(newf);
@@ -52,11 +57,12 @@ namespace TestWebApi.Controllers
 
         public async Task<ActionResult<IEnumerable<DbFile>>> Post(IFormFileCollection files)
         {
+            
             if (files == null||files.Count==0)
             {
                 return BadRequest("Нужно загрузить файл");
             }
-
+            
             Regex reg = new Regex(@"\.\w*$");
 
             List<DbFile> forresponse = new List<DbFile>();
@@ -103,6 +109,7 @@ namespace TestWebApi.Controllers
 
         private async Task ZipFile(FormFile formfile, DbFile metadata)
         {
+            Console.WriteLine($"Операция архивирования.\nРазмер несжатого файла - {formfile.Length / 1024000f} мБ");
             string path = Path.Combine(Directory.GetCurrentDirectory(), $"{metadata.Name}.gz");
 
             using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
@@ -121,6 +128,7 @@ namespace TestWebApi.Controllers
 
                 metadata.File.Data = buffer;
                 metadata.Size = buffer.Length / 1024000f;
+                Console.WriteLine($"Размер сжатого файла - {metadata.Size}");
             }
 
             System.IO.File.Delete(path);

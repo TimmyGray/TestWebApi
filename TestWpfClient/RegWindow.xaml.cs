@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using TestWebApi.Models;
@@ -12,8 +13,8 @@ namespace TestWpfClient
     /// </summary>
     public partial class RegWindow : Window
     {
-        Label ForLoginLabel;
-        HttpClient client;
+        readonly Label ForLoginLabel;
+        readonly HttpClient client;
         ObservableCollection<DbFile> files;
         public RegWindow(Label ForLoginLabel, HttpClient client, ObservableCollection<DbFile> files)
         {
@@ -33,32 +34,44 @@ namespace TestWpfClient
             else
             {
                 AuthorizeModel authorizeModel = new AuthorizeModel { Login = ForLoginBox.Text, Password = ForPassBox.Text };
-
-                using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/registration", authorizeModel))
+                try
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/registration", authorizeModel))
                     {
-                        var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
-                        MessageBox.Show($"{authorizeModel.Login} успешно добавлен!");
-                        Owner.IsEnabled = true;
-                        Owner.Show();
-                        ForLoginLabel.Content = authorizeModel.Login;
-
-                        foreach (DbFile file in download)
+                        if (response.IsSuccessStatusCode)
                         {
-                            files.Add(file);
+                            var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
+                            MessageBox.Show($"{authorizeModel.Login} успешно добавлен!");
+                            Owner.IsEnabled = true;
+                            Owner.Show();
+                            ForLoginLabel.Content = authorizeModel.Login;
+
+                            foreach (DbFile file in download)
+                            {
+                                files.Add(file);
+                            }
+
+                            Close();
+
                         }
+                        else
+                        {
+                            var error = response.Content.ReadAsStringAsync().Result;
+                            MessageBox.Show(error);
 
-                        Close();
-                        
-                    }
-                    else
-                    {
-                        var error = response.Content.ReadAsStringAsync().Result;
-                        MessageBox.Show(error);
-
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    string message = ex.Message;
+                    string stacktrace = ex.StackTrace;
+                    string inner = ex.InnerException.Message;
+
+                    MessageBox.Show($"Что-то пошло не так=((\n{message}\n{stacktrace}\n{inner}");
+                    
+                }
+                
                 
             }
                 
@@ -75,33 +88,45 @@ namespace TestWpfClient
             else
             {
                 AuthorizeModel login = new AuthorizeModel { Login = ForLoginBox.Text, Password = ForPassBox.Text };
-
-                using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/login", login))
+                try
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (HttpResponseMessage response = await client.PostAsJsonAsync("/users/login", login))
                     {
-                        var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
-                        Owner.IsEnabled = true;
-                       
-                        Owner.Show();
-                        ForLoginLabel.Content = login.Login;
-
-                        foreach (DbFile file in download)
+                        if (response.IsSuccessStatusCode)
                         {
-                            files.Add(file);
-                        }
+                            var download = JsonConvert.DeserializeObject<ObservableCollection<DbFile>>(response.Content.ReadAsStringAsync().Result);
+                            Owner.IsEnabled = true;
 
-                        Close();
-                     
-                    }
-                    else
-                    {
-                        var error = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show(error);
-                    
+                            Owner.Show();
+                            ForLoginLabel.Content = login.Login;
+
+                            foreach (DbFile file in download)
+                            {
+                                files.Add(file);
+                            }
+
+                            Close();
+
+                        }
+                        else
+                        {
+                            var error = await response.Content.ReadAsStringAsync();
+                            MessageBox.Show(error);
+
+                        }
                     }
                 }
-                
+                catch (Exception ex)
+                {
+                    string message = ex.Message;
+                    string stacktrace = ex.StackTrace;
+                    string inner = ex.InnerException.Message;
+
+                    MessageBox.Show($"Что-то пошло не так=((\n{message}\n{stacktrace}\n{inner}");
+
+                }
+
+
             }
 
         }

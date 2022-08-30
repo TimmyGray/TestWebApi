@@ -4,7 +4,16 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>$(VersionPrefix)</Version>
+    <Authors>Timmy</Authors>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Json.Net" Version="1.0.33" />
